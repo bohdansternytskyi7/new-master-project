@@ -1,12 +1,16 @@
 import React from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
+import { Route, Switch, Redirect } from 'react-router-dom';
+import { auth, createUserProfileDocument } from './firebase/firebase.utils.js';
+import { setCurrentUser } from './redux/user/user.actions';
+import { hideCart } from './redux/cart/cart.actions';
+import { selectCurrentUser } from './redux/user/user.selectors';
 import Header from './components/header/header.component';
 import HomePage from './pages/home/home.component';
 import ShopPage from './pages/shop/shop.component';
+import CheckoutPage from './pages/checkout/checkout.component';
 import SignInSignUp from './pages/sign-in-sign-up/sign-in-sign-up.component';
-import { auth, createUserProfileDocument } from './firebase/firebase.utils.js';
-import { connect } from 'react-redux';
-import { setCurrentUser } from './redux/user/user.actions';
 import './App.css';
 
 class App extends React.Component {
@@ -33,22 +37,40 @@ class App extends React.Component {
     this.unsubscribeFromAuth();
   }
 
+  handleClick = (e) => {
+    if (!e.target.closest('.cart-icon') && !e.target.closest('.cart-dropdown'))
+      this.props.hideCart();
+  };
+
   render() {
     return (
-      <div>
+      <div onClick={this.handleClick}>
         <Header />
         <Switch>
-          <Route path='/signin' component={SignInSignUp} />
-          <Route path='/shop' component={ShopPage} />
           <Route exact path='/' component={HomePage} />
+          <Route exact path='/checkout' component={CheckoutPage} />
+          <Route path='/shop' component={ShopPage} />
+          <Route path='/contact' component={HomePage} />
+          <Route
+            exact
+            path='/signin'
+            render={() =>
+              this.props.currentUser ? <Redirect to='/' /> : <SignInSignUp />
+            }
+          />
         </Switch>
       </div>
     );
   }
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  setCurrentUser: (user) => dispatch(setCurrentUser(user)),
+const mapStateToProps = createStructuredSelector({
+  currentUser: selectCurrentUser,
 });
 
-export default connect(null, mapDispatchToProps)(App);
+const mapDispatchToProps = (dispatch) => ({
+  setCurrentUser: (user) => dispatch(setCurrentUser(user)),
+  hideCart: () => dispatch(hideCart()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
