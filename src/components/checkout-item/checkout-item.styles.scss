@@ -23,6 +23,23 @@
   }
 
   .quantity {
+    display: flex;
+    user-select: none;
+
+    .arrow {
+      cursor: pointer;
+    }
+
+    .arrow-disabled {
+      color: rgba(0, 0, 0, 0.5);
+    }
+
+    .value {
+      margin: 0 10px;
+    }
+  }
+
+  .quantity {
     padding-left: 20px;
   }
 
