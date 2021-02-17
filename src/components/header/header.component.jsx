@@ -13,9 +13,6 @@ import {
   OptionLink,
 } from './header.styles';
 
-// import { Link } from 'react-router-dom';
-// import './header.styles.scss';
-
 const Header = ({ currentUser, hidden }) => (
   <HeaderContainer>
     <LogoContainer to='/'>
