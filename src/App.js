@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { Route, Switch, Redirect } from 'react-router-dom';
+import { checkUserSession } from './redux/user/user.actions';
 import { hideCart } from './redux/cart/cart.actions';
 import { selectCurrentUser } from './redux/user/user.selectors';
 import { selectCartHidden } from './redux/cart/cart.selectors';
@@ -13,6 +14,11 @@ import SignInSignUp from './pages/sign-in-sign-up/sign-in-sign-up.component';
 import './App.css';
 
 class App extends React.Component {
+  componentDidMount() {
+    const { checkUserSession } = this.props;
+    checkUserSession();
+  }
+
   handleClick = (e) => {
     if (this.props.cartHidden) return;
     if (!e.target.closest('.cart-icon') && !e.target.closest('.cart-dropdown'))
@@ -48,6 +54,7 @@ const mapStateToProps = createStructuredSelector({
 
 const mapDispatchToProps = (dispatch) => ({
   hideCart: () => dispatch(hideCart()),
+  checkUserSession: () => dispatch(checkUserSession()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
